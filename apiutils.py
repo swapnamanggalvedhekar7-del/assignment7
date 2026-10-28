@@ -31,9 +31,21 @@ def create_booking(playwright:Playwright,token,event):
 
 def get_booking_response(playwright:Playwright,result,token):
     api_request_context = playwright.request.new_context(base_url="https://api.eventhub.rahulshettyacademy.com/")
-    response = api_request_context.get(f"api/bookings/{result["data"]['id']}",headers={"Authorization":f"Bearer {token}"})
-    api_request_context.dispose()
-    return response.json()["data"]
+    try:
+        response = api_request_context.get(
+            f"api/bookings/{result['data']['id']}",
+            headers={"Authorization": f"Bearer {token}"}
+        )
+
+        assert response.status == 200, (
+            f"Failed to fetch booking. Status: {response.status}"
+        )
+
+        return response.json()["data"]
+
+
+    finally:
+        api_request_context.dispose()
 
 def delete_booking(playwright:Playwright,result,token):
     api_request_context = playwright.request.new_context(base_url="https://api.eventhub.rahulshettyacademy.com/")

@@ -42,7 +42,9 @@ def test_assignment7(playwright:Playwright):
         # raise AssertionError(
         #         f"No bookable event found with at least {event["availableSeats"]} seats"
         #     )
-        break
+            break
+            assert selected_event, (
+                "No bookable event found with at least 2 available seats")
     booking= apiutils.create_booking(playwright, token,selected_event)
 
     #Confirm the create response returns a booking id and a human-readable reference code, then store id, reference, selected event fields, and expected total for later assertions.
@@ -109,6 +111,9 @@ def test_assignment7(playwright:Playwright):
     Venue_value = Venue_row.locator("span").nth(1).inner_text()
     City_row = page.get_by_text("City").locator('..')
     City_value = City_row.locator("span").nth(1).inner_text()
+    #identifying email id
+    Email_row = page.get_by_text("Email").locator('..')
+    Email_value = Email_row.locator("span").nth(1).inner_text()
     assert Event_value == selected_event["title"],"Event title does not match"
     assert Category_value == selected_event["category"],"Event Category does not match"
     api_date = selected_event["eventDate"]
@@ -125,6 +130,8 @@ def test_assignment7(playwright:Playwright):
     # assert Date_value == selected_event["eventDate"],"Event Date does not match"
     assert Venue_value== selected_event["venue"],"Event Venue does not match"
     assert City_value == selected_event["city"], "Event City does not match"
+    #email id asserted
+    assert Email_value == booking_details["customerEmail"]
     ticket_row = page.get_by_text("Tickets").locator('..')
     ticket_value = ticket_row.locator("span").nth(1).inner_text()
     assert int(ticket_value) == data["quantity"]
